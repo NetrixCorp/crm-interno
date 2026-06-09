@@ -1,4 +1,5 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
+import Link from "next/link";
 
 export default async function DashboardPage() {
   const user = await currentUser();
@@ -7,7 +8,7 @@ export default async function DashboardPage() {
   return (
     <div>
       <h2 style={{ fontSize: "2rem", color: "#FF2E2E", marginBottom: "1rem" }}>
-        🎉 Bienvenido, {user?.firstName || "Usuario"}!
+        🎉 Bienvenido, {user?.firstName || user?.emailAddresses[0]?.emailAddress || "Usuario"}!
       </h2>
       <p style={{ color: "#aaa", marginBottom: "1.5rem", fontSize: "1.1rem" }}>
         El CRM NETRIX está en construcción. Próximas fases:
