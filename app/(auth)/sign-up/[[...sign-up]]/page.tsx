@@ -1,9 +1,15 @@
-import { SignUp } from "@clerk/nextjs";
+import { SignUp } from '@clerk/nextjs'
 
 export default function SignUpPage() {
   return (
-    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", background: "#0D0D0D" }}>
-      <SignUp />
-    </div>
-  );
+    <main className="min-h-screen flex items-center justify-center bg-brand-black">
+      <div className="flex flex-col items-center gap-6">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-white tracking-widest">NETRIX</h1>
+          <p className="text-brand-gray-mid text-sm mt-1">CRM Interno</p>
+        </div>
+        <SignUp />
+      </div>
+    </main>
+  )
 }

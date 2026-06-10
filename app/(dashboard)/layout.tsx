@@ -1,32 +1,30 @@
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
-import Link from "next/link";
-import { UserButton } from "@clerk/nextjs";
+import { auth } from '@clerk/nextjs/server'
+import { redirect } from 'next/navigation'
+import { isSubscriptionActive } from '@/lib/constants'
 
 export default async function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const { userId } = await auth();
-  if (!userId) {
-    redirect("/sign-in");
-  }
+  const { userId } = auth()
+  if (!userId) redirect('/sign-in')
+  if (!isSubscriptionActive) redirect('/cuenta-suspendida')
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0D0D0D", color: "#fff", display: "flex", flexDirection: "column" }}>
-      {/* Header */}
-      <header style={{ borderBottom: "1px solid #333", padding: "1rem 2rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h1 style={{ fontSize: "1.5rem", fontWeight: "bold", color: "#FF2E2E" }}>NETRIX CRM</h1>
-        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-          <Link href="/dashboard" style={{ color: "#ccc", textDecoration: "none", padding: "0.5rem 1rem" }}>Dashboard</Link>
-          <UserButton afterSignOutUrl="/sign-in" />
+    <div className="min-h-screen bg-brand-black flex">
+      <aside className="w-64 bg-brand-black-soft border-r border-brand-gray-dark flex-shrink-0">
+        <div className="p-6 border-b border-brand-gray-dark">
+          <h1 className="text-xl font-bold text-white tracking-widest">NETRIX</h1>
+          <p className="text-xs text-brand-gray-mid mt-0.5">CRM Interno</p>
         </div>
-      </header>
-      {/* Main Content */}
-      <main style={{ padding: "2rem", flex: 1 }}>
-        {children}
+        <nav className="p-4">
+          <p className="text-brand-gray-mid text-xs">Navegación — CRM-2</p>
+        </nav>
+      </aside>
+      <main className="flex-1 overflow-auto">
+        <div className="p-8">{children}</div>
       </main>
     </div>
-  );
+  )
 }

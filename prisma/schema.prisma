@@ -6,64 +6,157 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id         String     @id @default(cuid())
-  clerkId    String     @unique
-  email      String     @unique
-  name       String?
-  role       String     @default("vendor")
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  contacts   Contact[]
-  deals      Deal[]
-  activities Activity[]
-}
-
 model Contact {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String        @id @default(uuid())
   name      String
   email     String?
   phone     String?
-  company   String
-  source    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deals     Deal[]
+  company   String?
+  source    ContactSource @default(Otro)
+  status    ContactStatus @default(Activo)
+  leadScore Int           @default(0) @map("lead_score")
+  notes     String?
+  userId    String        @map("user_id")
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
 
-  @@index([userId])
+  deals      Deal[]
+  activities Activity[]
+
+  @@map("contacts")
 }
 
 model Deal {
-  id           String     @id @default(cuid())
-  userId       String
-  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  contactId    String
-  contact      Contact    @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  id           String       @id @default(uuid())
+  contactId    String       @map("contact_id")
   title        String
-  value        Int
-  stage        String     @default("Lead")
-  service      String?
+  service      ServiceType
+  level        ServiceLevel @default(N1)
+  valueCop     BigInt       @default(0) @map("value_cop")
+  stage        DealStage    @default(Lead)
+  probability  Int          @default(10)
+  nextFollowUp DateTime?    @map("next_follow_up")
+  stagnatedAt  DateTime?    @map("stagnated_at")
   notes        String?
-  nextFollowUp DateTime?
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  activities   Activity[]
+  assignedTo   String?      @map("assigned_to")
+  userId       String       @map("user_id")
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
 
-  @@index([userId])
-  @@index([contactId])
+  contact        Contact         @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  activities     Activity[]
+  calendarEvents CalendarEvent[]
+  automationLogs AutomationLog[]
+
+  @@map("deals")
 }
 
 model Activity {
-  id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  dealId      String
-  deal        Deal     @relation(fields: [dealId], references: [id], onDelete: Cascade)
-  type        String
+  id          String       @id @default(uuid())
+  dealId      String?      @map("deal_id")
+  contactId   String?      @map("contact_id")
+  type        ActivityType
   description String
-  createdAt   DateTime @default(now())
+  outcome     String?
+  userId      String       @map("user_id")
+  createdAt   DateTime     @default(now()) @map("created_at")
 
-  @@index([dealId])
+  deal    Deal?    @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  contact Contact? @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@map("activities")
+}
+
+model CalendarEvent {
+  id            String    @id @default(uuid())
+  dealId        String    @map("deal_id")
+  googleEventId String?   @map("google_event_id")
+  title         String
+  startTime     DateTime  @map("start_time")
+  endTime       DateTime? @map("end_time")
+  eventType     EventType @default(Reunion) @map("event_type")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  deal Deal @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@map("calendar_events")
+}
+
+model AutomationLog {
+  id        String           @id @default(uuid())
+  autoType  String           @map("auto_type")
+  trigger   String
+  status    AutomationStatus @default(pending)
+  details   Json?
+  dealId    String?          @map("deal_id")
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  deal Deal? @relation(fields: [dealId], references: [id])
+
+  @@map("automation_logs")
+}
+
+enum ContactSource {
+  WhatsApp
+  Instagram
+  Referido
+  Web
+  LinkedIn
+  Otro
+}
+
+enum ContactStatus {
+  Activo
+  Inactivo
+  Ganado
+  Perdido
+}
+
+enum ServiceType {
+  CRM
+  Landing
+  Ecommerce
+  Dashboard
+  Chatbot
+  Automatizacion
+  Web
+  API
+  Diagnostico
+}
+
+enum ServiceLevel {
+  N1
+  N2
+  N3
+  N4
+}
+
+enum DealStage {
+  Lead
+  Propuesta_Enviada
+  Negociacion
+  Cerrado
+  Perdido
+}
+
+enum ActivityType {
+  Llamada
+  WhatsApp
+  Email
+  Reunion
+  Nota
+  Propuesta
+  Cierre
+}
+
+enum EventType {
+  Llamada
+  Reunion
+  FollowUp
+}
+
+enum AutomationStatus {
+  pending
+  success
+  failed
 }
