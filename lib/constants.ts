@@ -33,8 +33,8 @@ export const DEAL_STAGES = [
   { id: 'Lead', label: 'Lead', color: '#3B82F6' },
   { id: 'Propuesta_Enviada', label: 'Propuesta enviada', color: '#F59E0B' },
   { id: 'Negociacion', label: 'Negociación', color: '#F97316' },
-  { id: 'Cerrado', label: 'Cerrado ✅', color: '#22C55E' },
-  { id: 'Perdido', label: 'Perdido ❌', color: '#EF4444' },
+  { id: 'Cerrado', label: 'Cerrado', color: '#22C55E' },
+  { id: 'Perdido', label: 'Perdido', color: '#EF4444' },
 ] as const
 
 export const CONTACT_SOURCES = [
@@ -64,3 +64,15 @@ export const isSubscriptionActive = process.env.SUBSCRIPTION_ACTIVE !== 'false'
 export const CRON_DAILY_HOUR = 9
 export const CRON_WEEKLY_DAY = 1
 export const STAGNATION_DAYS = 3
+
+export const PRICING_DEFAULTS: Record<string, Record<string, number>> = {
+  CRM:            { N1: 2500000, N2: 3000000, N3: 3500000, N4: 4000000 },
+  Web:            { N1: 2000000, N2: 2500000, N3: 3000000, N4: 3500000 },
+  Ecommerce:      { N1: 3000000, N2: 3500000, N3: 4000000, N4: 5000000 },
+  Dashboard:      { N1: 2000000, N2: 2500000, N3: 3000000, N4: 3500000 },
+  Chatbot:        { N1: 2500000, N2: 3000000, N3: 3500000, N4: 4000000 },
+  Automatizacion: { N1: 2000000, N2: 2500000, N3: 3000000, N4: 4000000 },
+  Landing:        { N1: 1200000, N2: 1600000, N3: 2000000, N4: 2500000 },
+  API:            { N1: 2000000, N2: 3000000, N3: 4000000, N4: 5000000 },
+  Diagnostico:    { N1: 500000,  N2: 500000,  N3: 500000,  N4: 500000  },
+}

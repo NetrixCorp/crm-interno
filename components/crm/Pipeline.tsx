@@ -2,12 +2,20 @@
 
 import { useEffect, useState } from 'react'
 import { DragDropContext, Droppable, type DropResult } from '@hello-pangea/dnd'
-import { Plus } from 'lucide-react'
+import { CircleDot, Send, Handshake, CheckCircle2, XCircle, Plus } from 'lucide-react'
 import { DEAL_STAGES } from '@/lib/constants'
 import { formatCOP } from '@/lib/utils'
 import { trackEvent } from '@/lib/analytics'
 import { DealCard } from './DealCard'
 import { DealForm } from './DealForm'
+
+const STAGE_ICONS: Record<string, any> = {
+  Lead: CircleDot,
+  Propuesta_Enviada: Send,
+  Negociacion: Handshake,
+  Cerrado: CheckCircle2,
+  Perdido: XCircle,
+}
 
 export function Pipeline() {
   const [deals, setDeals] = useState<any[]>([])
@@ -78,7 +86,10 @@ export function Pipeline() {
                   className="bg-brand-black-soft border border-brand-gray-dark rounded-lg p-3 min-h-[400px]"
                 >
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: stage.color }} />
+                    {(() => {
+                      const Icon = STAGE_ICONS[stage.id]
+                      return Icon ? <Icon size={14} style={{ color: stage.color }} /> : null
+                    })()}
                     <p className="text-white text-sm font-medium">{stage.label}</p>
                   </div>
                   <p className="text-brand-gray-mid text-xs mb-3">

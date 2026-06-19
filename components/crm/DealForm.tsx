@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { X } from 'lucide-react'
-import { SERVICE_TYPES, SERVICE_LEVELS } from '@/lib/constants'
+import { SERVICE_TYPES, SERVICE_LEVELS, PRICING_DEFAULTS } from '@/lib/constants'
+import { formatCOP } from '@/lib/utils'
 import { trackEvent } from '@/lib/analytics'
 
 interface DealFormProps {
@@ -24,28 +25,40 @@ export function DealForm({ deal, defaultStage, onClose, onSaved }: DealFormProps
     nextFollowUp: deal?.nextFollowUp ? String(deal.nextFollowUp).slice(0, 10) : '',
   })
   const [saving, setSaving] = useState(false)
+  const lastSuggested = useRef<string>(deal ? '' : String(PRICING_DEFAULTS['CRM']['N1']))
+  const dateInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     fetch('/api/contacts').then((r) => r.json()).then(setContacts)
   }, [])
 
+  useEffect(() => {
+    const suggestion = PRICING_DEFAULTS[form.service]?.[form.level]
+    if (suggestion === undefined) return
+    if (form.valueCop === '' || form.valueCop === lastSuggested.current) {
+      setForm((f) => ({ ...f, valueCop: String(suggestion) }))
+    }
+    lastSuggested.current = String(suggestion)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.service, form.level])
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setSaving(true)
-
     const url = deal ? `/api/deals/${deal.id}` : '/api/deals'
     const method = deal ? 'PATCH' : 'POST'
-
     await fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...form, valueCop: Number(form.valueCop) || 0 }),
     })
-
     trackEvent(deal ? 'edit_deal' : 'create_deal', { service: form.service, level: form.level })
     setSaving(false)
     onSaved()
   }
+
+  const today = new Date().toISOString().slice(0, 10)
+  const suggested = PRICING_DEFAULTS[form.service]?.[form.level]
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
@@ -64,9 +77,7 @@ export function DealForm({ deal, defaultStage, onClose, onSaved }: DealFormProps
             className="w-full bg-brand-black border border-brand-gray-dark rounded-lg px-3 py-2 text-white text-sm"
           >
             <option value="">Seleccionar contacto...</option>
-            {contacts.map((c) => (
-              <option key={c.id} value={c.id}>{c.name}</option>
-            ))}
+            {contacts.map((c) => (<option key={c.id} value={c.id}>{c.name}</option>))}
           </select>
           <input
             required
@@ -91,21 +102,31 @@ export function DealForm({ deal, defaultStage, onClose, onSaved }: DealFormProps
               {SERVICE_LEVELS.map((l) => (<option key={l} value={l}>{l}</option>))}
             </select>
           </div>
-          <input
-            required
-            type="number"
-            placeholder="Valor en COP"
-            value={form.valueCop}
-            onChange={(e) => setForm({ ...form, valueCop: e.target.value })}
-            className="w-full bg-brand-black border border-brand-gray-dark rounded-lg px-3 py-2 text-white text-sm"
-          />
+          <div>
+            <input
+              required
+              type="number"
+              placeholder="Valor en COP"
+              value={form.valueCop}
+              onChange={(e) => setForm({ ...form, valueCop: e.target.value })}
+              className="w-full bg-brand-black border border-brand-gray-dark rounded-lg px-3 py-2 text-white text-sm"
+            />
+            {suggested !== undefined && (
+              <p className="text-brand-gray-mid text-xs mt-1">
+                Sugerido para {form.service} {form.level}: {formatCOP(suggested)} — editable
+              </p>
+            )}
+          </div>
           <div>
             <label className="text-brand-gray-mid text-xs">Próximo seguimiento</label>
             <input
+              ref={dateInputRef}
               type="date"
+              min={today}
               value={form.nextFollowUp}
+              onClick={() => dateInputRef.current?.showPicker?.()}
               onChange={(e) => setForm({ ...form, nextFollowUp: e.target.value })}
-              className="w-full bg-brand-black border border-brand-gray-dark rounded-lg px-3 py-2 text-white text-sm mt-1"
+              className="w-full bg-brand-black border border-brand-gray-dark rounded-lg px-3 py-2 text-white text-sm mt-1 cursor-pointer"
             />
           </div>
           <button
