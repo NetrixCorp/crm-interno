@@ -2,6 +2,8 @@ import { db } from '@/lib/db'
 import { formatCOP } from '@/lib/utils'
 import { KPICard } from '@/components/crm/KPICard'
 
+export const dynamic = 'force-dynamic'
+
 export default async function DashboardPage() {
   const now = new Date()
   const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0)

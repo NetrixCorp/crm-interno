@@ -4,6 +4,8 @@ import { sendInternalNotification } from '@/lib/email'
 import { formatCOP } from '@/lib/utils'
 import { DEAL_STAGES } from '@/lib/constants'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
 

@@ -40,3 +40,7 @@ next-env.d.ts
 
 # credenciales
 credenciales de CRM NETRIX.md
+.env*
+
+# clerk configuration (can include secrets)
+/.clerk/

@@ -4,6 +4,8 @@ import { sendInternalNotification } from '@/lib/email'
 import { formatCOP } from '@/lib/utils'
 import { STAGNATION_DAYS } from '@/lib/constants'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   const now = new Date()
   const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0)
