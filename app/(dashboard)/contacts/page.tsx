@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Plus, Trash2, Pencil } from 'lucide-react'
+import { Plus, Trash2, Pencil, MessageCircle } from 'lucide-react'
 import { ContactForm } from '@/components/crm/ContactForm'
-import { formatRelativeDate, getInitials } from '@/lib/utils'
+import { formatRelativeDate, getInitials, buildWhatsAppLink } from '@/lib/utils'
 
 export default function ContactsPage() {
   const [contacts, setContacts] = useState<any[]>([])
@@ -83,7 +83,18 @@ export default function ContactsPage() {
                   <td className="p-3 text-brand-gray-mid">{c._count.deals}</td>
                   <td className="p-3 text-brand-gray-mid">{formatRelativeDate(c.createdAt)}</td>
                   <td className="p-3">
-                    <div className="flex gap-2 justify-end">
+                    <div className="flex gap-2 justify-end items-center">
+                      {c.phone && (
+                        <a
+                          href={buildWhatsAppLink(c.phone, `Hola ${c.name}, te escribo desde NETRIX.`)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-brand-gray-mid hover:text-green-500"
+                          title="Escribir por WhatsApp"
+                        >
+                          <MessageCircle size={16} />
+                        </a>
+                      )}
                       <button onClick={() => { setEditing(c); setFormOpen(true) }} className="text-brand-gray-mid hover:text-white">
                         <Pencil size={16} />
                       </button>

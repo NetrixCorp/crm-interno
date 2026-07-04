@@ -48,3 +48,9 @@ export function isStagnated(updatedAt: Date, days = 3): boolean {
   const diffDays = diffMs / (1000 * 60 * 60 * 24)
   return diffDays > days
 }
+
+export function buildWhatsAppLink(phone: string, message: string): string {
+  let clean = phone.replace(/\D/g, '')
+  if (clean.length === 10) clean = `57${clean}`
+  return `https://wa.me/${clean}?text=${encodeURIComponent(message)}`
+}

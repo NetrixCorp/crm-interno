@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { db } from '@/lib/db'
+import { sendInternalNotification } from '@/lib/email'
+import { formatCOP } from '@/lib/utils'
 
 function serializeDeal(deal: any) {
   return { ...deal, valueCop: Number(deal.valueCop) }
@@ -43,6 +45,17 @@ export async function PATCH(
         userId,
       },
     })
+
+    await sendInternalNotification(
+      `Deal actualizado: ${deal.title}`,
+      `<div style="font-family: sans-serif;">
+        <h2 style="color:#0D0D0D;">Cambio de etapa en el pipeline</h2>
+        <p><strong>Deal:</strong> ${deal.title}</p>
+        <p><strong>Contacto:</strong> ${deal.contact.name}</p>
+        <p><strong>De:</strong> ${current.stage} → <strong>A:</strong> ${body.stage}</p>
+        <p><strong>Valor:</strong> ${formatCOP(Number(deal.valueCop))}</p>
+      </div>`
+    )
   }
 
   return NextResponse.json(serializeDeal(deal))

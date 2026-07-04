@@ -1,7 +1,8 @@
 'use client'
 
 import { Draggable } from '@hello-pangea/dnd'
-import { formatCOP, formatRelativeDate } from '@/lib/utils'
+import { MessageCircle } from 'lucide-react'
+import { formatCOP, formatRelativeDate, buildWhatsAppLink } from '@/lib/utils'
 
 interface DealCardProps {
   deal: any
@@ -26,7 +27,21 @@ export function DealCard({ deal, index, onClick }: DealCardProps) {
           <p className="text-brand-gray-mid text-xs mt-0.5">{deal.contact?.name}</p>
           <div className="flex items-center justify-between mt-2">
             <span className="text-brand-red text-sm font-semibold">{formatCOP(deal.valueCop)}</span>
-            <span className="text-brand-gray-mid text-xs">{formatRelativeDate(deal.updatedAt)}</span>
+            <div className="flex items-center gap-2">
+              {deal.contact?.phone && (
+                <a
+                  href={buildWhatsAppLink(deal.contact.phone, `Hola ${deal.contact.name}, te escribo sobre ${deal.title}.`)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="text-brand-gray-mid hover:text-green-500"
+                  title="Escribir por WhatsApp"
+                >
+                  <MessageCircle size={14} />
+                </a>
+              )}
+              <span className="text-brand-gray-mid text-xs">{formatRelativeDate(deal.updatedAt)}</span>
+            </div>
           </div>
         </div>
       )}

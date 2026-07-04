@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { db } from '@/lib/db'
+import { sendInternalNotification } from '@/lib/email'
 
 export async function GET() {
   const { userId } = await auth()
@@ -29,5 +30,18 @@ export async function POST(request: Request) {
       userId,
     },
   })
+
+  await sendInternalNotification(
+    `Nuevo contacto: ${contact.name}`,
+    `<div style="font-family: sans-serif;">
+      <h2 style="color:#0D0D0D;">Nuevo contacto registrado</h2>
+      <p><strong>Nombre:</strong> ${contact.name}</p>
+      <p><strong>Empresa:</strong> ${contact.company || '—'}</p>
+      <p><strong>Fuente:</strong> ${contact.source}</p>
+      <p><strong>Email:</strong> ${contact.email || '—'}</p>
+      <p><strong>Teléfono:</strong> ${contact.phone || '—'}</p>
+    </div>`
+  )
+
   return NextResponse.json(contact, { status: 201 })
 }
