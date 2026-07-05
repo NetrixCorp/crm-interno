@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { UserButton } from '@clerk/nextjs'
-import { LayoutDashboard, Users, KanbanSquare, Briefcase } from 'lucide-react'
+import { LayoutDashboard, Users, KanbanSquare, Briefcase, BarChart2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const NAV_ITEMS = [
@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { href: '/pipeline', label: 'Pipeline', icon: KanbanSquare },
   { href: '/contacts', label: 'Contactos', icon: Users },
   { href: '/deals', label: 'Deals', icon: Briefcase },
+  { href: '/reports', label: 'Reportes', icon: BarChart2 },
 ]
 
 export function Sidebar() {
