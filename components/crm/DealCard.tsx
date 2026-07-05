@@ -1,7 +1,7 @@
 'use client'
 
 import { Draggable } from '@hello-pangea/dnd'
-import { MessageCircle } from 'lucide-react'
+import { FaWhatsapp } from 'react-icons/fa'
 import { formatCOP, formatRelativeDate, buildWhatsAppLink } from '@/lib/utils'
 
 interface DealCardProps {
@@ -37,7 +37,7 @@ export function DealCard({ deal, index, onClick }: DealCardProps) {
                   className="text-brand-gray-mid hover:text-green-500"
                   title="Escribir por WhatsApp"
                 >
-                  <MessageCircle size={14} />
+                  <FaWhatsapp size={14} />
                 </a>
               )}
               <span className="text-brand-gray-mid text-xs">{formatRelativeDate(deal.updatedAt)}</span>

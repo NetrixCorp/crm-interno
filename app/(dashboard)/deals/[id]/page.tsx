@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Pencil, Trash2, MessageCircle, Calendar } from 'lucide-react'
+import { ArrowLeft, Pencil, Trash2, Calendar } from 'lucide-react'
+import { FaWhatsapp } from 'react-icons/fa'
 import { ActivityFeed } from '@/components/crm/ActivityFeed'
 import { DealForm } from '@/components/crm/DealForm'
 import { formatCOP, formatDate, formatRelativeDate, buildWhatsAppLink } from '@/lib/utils'
@@ -64,7 +65,7 @@ export default function DealDetailPage() {
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-sm bg-brand-black-soft border border-brand-gray-dark text-brand-gray-mid hover:text-green-500 hover:border-green-500 px-3 py-2 rounded-lg transition-colors"
             >
-              <MessageCircle size={16} /> WhatsApp
+              <FaWhatsapp size={16} /> WhatsApp
             </a>
           )}
           <button

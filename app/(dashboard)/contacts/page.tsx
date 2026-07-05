@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Plus, Trash2, Pencil, MessageCircle } from 'lucide-react'
+import { Plus, Trash2, Pencil } from 'lucide-react'
+import { FaWhatsapp } from 'react-icons/fa'
 import { ContactForm } from '@/components/crm/ContactForm'
 import { formatRelativeDate, getInitials, buildWhatsAppLink } from '@/lib/utils'
 
@@ -92,7 +93,7 @@ export default function ContactsPage() {
                           className="text-brand-gray-mid hover:text-green-500"
                           title="Escribir por WhatsApp"
                         >
-                          <MessageCircle size={16} />
+                          <FaWhatsapp size={16} />
                         </a>
                       )}
                       <button onClick={() => { setEditing(c); setFormOpen(true) }} className="text-brand-gray-mid hover:text-white">
