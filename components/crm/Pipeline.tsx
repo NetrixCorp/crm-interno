@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { DragDropContext, Droppable, type DropResult } from '@hello-pangea/dnd'
 import { CircleDot, Send, Handshake, CheckCircle2, XCircle, Plus } from 'lucide-react'
 import { DEAL_STAGES } from '@/lib/constants'
@@ -18,6 +19,7 @@ const STAGE_ICONS: Record<string, any> = {
 }
 
 export function Pipeline() {
+  const router = useRouter()
   const [deals, setDeals] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [formOpen, setFormOpen] = useState(false)
@@ -100,7 +102,7 @@ export function Pipeline() {
                       key={deal.id}
                       deal={deal}
                       index={index}
-                      onClick={() => { setEditing(deal); setFormOpen(true) }}
+                      onClick={() => router.push(`/deals/${deal.id}`)}
                     />
                   ))}
                   {provided.placeholder}
