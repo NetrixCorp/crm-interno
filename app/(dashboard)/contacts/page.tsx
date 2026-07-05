@@ -33,6 +33,11 @@ export default function ContactsPage() {
         <div>
           <h1 className="text-2xl font-bold text-white">Contactos</h1>
           <p className="text-brand-gray-mid text-sm">{contacts.length} contactos registrados</p>
+          <p className="text-brand-gray-mid text-xs mt-1 max-w-lg">
+            Registrá aquí a cada persona que contacte a NETRIX. Un contacto puede tener
+            varios deals asociados. Usá el ícono de WhatsApp para escribirle directamente
+            con un mensaje prellenado.
+          </p>
         </div>
         <button
           onClick={() => { setEditing(null); setFormOpen(true) }}
@@ -45,7 +50,19 @@ export default function ContactsPage() {
       {loading ? (
         <p className="text-brand-gray-mid text-sm">Cargando...</p>
       ) : contacts.length === 0 ? (
-        <p className="text-brand-gray-mid text-sm">No hay contactos todavía. Crea el primero.</p>
+        <div className="text-center py-16">
+          <p className="text-white font-medium mb-2">No hay contactos todavía</p>
+          <p className="text-brand-gray-mid text-sm mb-4 max-w-sm mx-auto">
+            Cada vez que llegue un lead nuevo por WhatsApp, Instagram o referido,
+            registralo aquí. El sistema te manda un email automático cuando creás uno.
+          </p>
+          <button
+            onClick={() => { setEditing(null); setFormOpen(true) }}
+            className="bg-brand-red text-white text-sm font-semibold px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
+          >
+            Crear primer contacto
+          </button>
+        </div>
       ) : (
         <div className="bg-brand-black-soft border border-brand-gray-dark rounded-lg overflow-hidden">
           <table className="w-full text-sm">

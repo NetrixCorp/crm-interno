@@ -68,6 +68,11 @@ export function Pipeline() {
         <div>
           <h1 className="text-2xl font-bold text-white">Pipeline</h1>
           <p className="text-brand-gray-mid text-sm">{deals.length} deals en total</p>
+          <p className="text-brand-gray-mid text-xs mt-1 max-w-xl">
+            Arrastrá las cards entre columnas para avanzar cada oportunidad. Hacé click en
+            una card para ver el detalle completo y registrar actividades. Recibirás un
+            email automático en cada cambio de etapa.
+          </p>
         </div>
         <button
           onClick={() => { setEditing(null); setDefaultStage('Lead'); setFormOpen(true) }}
@@ -105,6 +110,13 @@ export function Pipeline() {
                       onClick={() => router.push(`/deals/${deal.id}`)}
                     />
                   ))}
+                  {dealsByStage(stage.id).length === 0 && (
+                    <p className="text-brand-gray-mid text-xs text-center py-4 px-2">
+                      {stage.id === 'Lead'
+                        ? 'Usá "Nuevo deal" para agregar tu primera oportunidad'
+                        : `Sin deals en ${stage.label}`}
+                    </p>
+                  )}
                   {provided.placeholder}
                 </div>
               )}

@@ -52,6 +52,12 @@ export function ContactForm({ contact, onClose, onSaved }: ContactFormProps) {
           </button>
         </div>
         <form onSubmit={handleSubmit} className="p-4 space-y-3">
+          {!contact && (
+            <p className="text-brand-gray-mid text-xs mb-3 leading-relaxed">
+              Completá los datos del lead. El teléfono es importante para el botón
+              de WhatsApp directo. La fuente ayuda a entender de dónde vienen los clientes.
+            </p>
+          )}
           <input
             required
             placeholder="Nombre completo"

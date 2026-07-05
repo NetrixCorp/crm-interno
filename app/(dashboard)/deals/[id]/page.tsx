@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Pencil, Trash2, Calendar } from 'lucide-react'
+import { ArrowLeft, Pencil, Trash2, Calendar, X } from 'lucide-react'
 import { FaWhatsapp } from 'react-icons/fa'
 import { ActivityFeed } from '@/components/crm/ActivityFeed'
 import { DealForm } from '@/components/crm/DealForm'
@@ -10,6 +10,146 @@ import { formatCOP, formatDate, formatRelativeDate, buildWhatsAppLink } from '@/
 import { DEAL_STAGES } from '@/lib/constants'
 
 export const dynamic = 'force-dynamic'
+
+function CalendarButton({ dealId, contactEmail }: { dealId: string; contactEmail?: string }) {
+  const [open, setOpen] = useState(false)
+  const [form, setForm] = useState({
+    title: '',
+    description: '',
+    date: '',
+    startTime: '10:00',
+    endTime: '11:00',
+  })
+  const [creating, setCreating] = useState(false)
+  const [created, setCreated] = useState<string | null>(null)
+
+  async function handleCreate(e: React.FormEvent) {
+    e.preventDefault()
+    setCreating(true)
+
+    const startDateTime = `${form.date}T${form.startTime}:00`
+    const endDateTime = `${form.date}T${form.endTime}:00`
+
+    const res = await fetch(`/api/deals/${dealId}/calendar`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: form.title,
+        description: form.description,
+        startDateTime,
+        endDateTime,
+      }),
+    })
+
+    const data = await res.json()
+
+    if (res.ok) {
+      setCreated(data.htmlLink)
+      setOpen(false)
+    } else if (data.error === 'Google Calendar no conectado') {
+      window.location.href = `/api/auth/google?dealId=${dealId}`
+    }
+    setCreating(false)
+  }
+
+  const today = new Date().toISOString().slice(0, 10)
+
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className="flex items-center gap-2 text-sm bg-brand-black-soft border border-brand-gray-dark text-brand-gray-mid hover:text-white px-3 py-2 rounded-lg transition-colors"
+      >
+        <Calendar size={16} /> Agendar reunión
+      </button>
+
+      {created && (
+        <a
+          href={created}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 text-sm bg-green-500/10 border border-green-500/30 text-green-400 px-3 py-2 rounded-lg"
+        >
+          <Calendar size={16} /> Ver en Google Calendar
+        </a>
+      )}
+
+      {open && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
+          <div className="bg-brand-black-soft border border-brand-gray-dark rounded-lg w-full max-w-sm">
+            <div className="flex items-center justify-between p-4 border-b border-brand-gray-dark">
+              <h3 className="text-white font-semibold text-sm">Nueva reunión en Google Calendar</h3>
+              <button onClick={() => setOpen(false)} className="text-brand-gray-mid hover:text-white">
+                <X size={16} />
+              </button>
+            </div>
+            <form onSubmit={handleCreate} className="p-4 space-y-3">
+              <input
+                required
+                placeholder="Título de la reunión"
+                value={form.title}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                className="w-full bg-brand-black border border-brand-gray-dark rounded-lg px-3 py-2 text-white text-sm"
+              />
+              <textarea
+                placeholder="Descripción (opcional)"
+                value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                rows={2}
+                className="w-full bg-brand-black border border-brand-gray-dark rounded-lg px-3 py-2 text-white text-sm resize-none"
+              />
+              <div>
+                <label className="text-brand-gray-mid text-xs">Fecha</label>
+                <input
+                  required
+                  type="date"
+                  min={today}
+                  value={form.date}
+                  onClick={(e) => (e.target as HTMLInputElement).showPicker?.()}
+                  onChange={(e) => setForm({ ...form, date: e.target.value })}
+                  className="w-full bg-brand-black border border-brand-gray-dark rounded-lg px-3 py-2 text-white text-sm mt-1 cursor-pointer"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-brand-gray-mid text-xs">Hora inicio</label>
+                  <input
+                    required
+                    type="time"
+                    value={form.startTime}
+                    onChange={(e) => setForm({ ...form, startTime: e.target.value })}
+                    className="w-full bg-brand-black border border-brand-gray-dark rounded-lg px-3 py-2 text-white text-sm mt-1"
+                  />
+                </div>
+                <div>
+                  <label className="text-brand-gray-mid text-xs">Hora fin</label>
+                  <input
+                    required
+                    type="time"
+                    value={form.endTime}
+                    onChange={(e) => setForm({ ...form, endTime: e.target.value })}
+                    className="w-full bg-brand-black border border-brand-gray-dark rounded-lg px-3 py-2 text-white text-sm mt-1"
+                  />
+                </div>
+              </div>
+              <p className="text-brand-gray-mid text-xs">
+                Si es la primera vez, te va a pedir conectar tu cuenta de Google.
+                {contactEmail && ` Se invitará automáticamente a ${contactEmail}.`}
+              </p>
+              <button
+                type="submit"
+                disabled={creating}
+                className="w-full bg-brand-red text-white font-semibold py-2 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 text-sm"
+              >
+                {creating ? 'Creando...' : 'Crear evento en Google Calendar'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+    </>
+  )
+}
 
 export default function DealDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -68,6 +208,10 @@ export default function DealDetailPage() {
               <FaWhatsapp size={16} /> WhatsApp
             </a>
           )}
+          <CalendarButton
+            dealId={id}
+            contactEmail={deal.contact.email || undefined}
+          />
           <button
             onClick={() => setEditOpen(true)}
             className="flex items-center gap-2 text-sm bg-brand-black-soft border border-brand-gray-dark text-brand-gray-mid hover:text-white px-3 py-2 rounded-lg transition-colors"

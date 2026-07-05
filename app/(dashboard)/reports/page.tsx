@@ -7,8 +7,10 @@ export default function ReportsPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-white">Reportes</h1>
-        <p className="text-brand-gray-mid text-sm">
-          Análisis del pipeline y performance comercial
+        <p className="text-brand-gray-mid text-sm max-w-lg">
+          Análisis del pipeline comercial de NETRIX. Las gráficas se actualizan en
+          tiempo real con los datos del CRM. A más deals registrados y movidos entre
+          etapas, más preciso se vuelve el análisis.
         </p>
       </div>
       <ReportsCharts />

@@ -70,6 +70,12 @@ export function DealForm({ deal, defaultStage, onClose, onSaved }: DealFormProps
           </button>
         </div>
         <form onSubmit={handleSubmit} className="p-4 space-y-3">
+          {!deal && (
+            <p className="text-brand-gray-mid text-xs mb-3 leading-relaxed">
+              El precio se llena automáticamente según el servicio y nivel. Podés
+              modificarlo manualmente si hay un acuerdo especial con el cliente.
+            </p>
+          )}
           <select
             required
             value={form.contactId}

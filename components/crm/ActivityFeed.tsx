@@ -113,7 +113,13 @@ export function ActivityFeed({ dealId, activities, onActivityAdded }: ActivityFe
       )}
 
       {activities.length === 0 ? (
-        <p className="text-brand-gray-mid text-sm">No hay actividades registradas todavía.</p>
+        <div className="text-center py-8">
+          <p className="text-white text-sm font-medium mb-2">Sin actividades todavía</p>
+          <p className="text-brand-gray-mid text-xs max-w-xs mx-auto">
+            Registrá cada interacción con este cliente: llamadas, mensajes de WhatsApp,
+            reuniones, propuestas enviadas. Esto construye el historial completo del deal.
+          </p>
+        </div>
       ) : (
         <div className="space-y-3">
           {activities.map((activity) => {

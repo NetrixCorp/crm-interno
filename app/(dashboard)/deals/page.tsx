@@ -26,6 +26,10 @@ export default function DealsPage() {
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-white">Deals</h1>
         <p className="text-brand-gray-mid text-sm">{deals.length} oportunidades en total</p>
+        <p className="text-brand-gray-mid text-xs mt-1">
+          Hacé click en cualquier fila para ver el detalle completo, registrar
+          actividades y ver el historial de esa oportunidad.
+        </p>
       </div>
 
       {loading ? (
