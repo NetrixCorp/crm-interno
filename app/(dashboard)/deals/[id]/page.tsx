@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Pencil, Trash2, Calendar, X } from 'lucide-react'
+import { ArrowLeft, Pencil, Trash2, Calendar, X, Video } from 'lucide-react'
 import { FaWhatsapp } from 'react-icons/fa'
 import { ActivityFeed } from '@/components/crm/ActivityFeed'
 import { DealForm } from '@/components/crm/DealForm'
@@ -21,7 +21,10 @@ function CalendarButton({ dealId, contactEmail }: { dealId: string; contactEmail
     endTime: '11:00',
   })
   const [creating, setCreating] = useState(false)
-  const [created, setCreated] = useState<string | null>(null)
+  const [created, setCreated] = useState<{
+    htmlLink: string
+    meetLink: string | null
+  } | null>(null)
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault()
@@ -44,7 +47,10 @@ function CalendarButton({ dealId, contactEmail }: { dealId: string; contactEmail
     const data = await res.json()
 
     if (res.ok) {
-      setCreated(data.htmlLink)
+      setCreated({
+        htmlLink: data.htmlLink,
+        meetLink: data.meetLink,
+      })
       setOpen(false)
     } else if (data.error === 'Google Calendar no conectado') {
       window.location.href = `/api/auth/google?dealId=${dealId}`
@@ -64,14 +70,26 @@ function CalendarButton({ dealId, contactEmail }: { dealId: string; contactEmail
       </button>
 
       {created && (
-        <a
-          href={created}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 text-sm bg-green-500/10 border border-green-500/30 text-green-400 px-3 py-2 rounded-lg"
-        >
-          <Calendar size={16} /> Ver en Google Calendar
-        </a>
+        <div className="flex gap-2 flex-wrap">
+          <a
+            href={created.htmlLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-sm bg-green-500/10 border border-green-500/30 text-green-400 px-3 py-2 rounded-lg"
+          >
+            <Calendar size={16} /> Ver en Calendar
+          </a>
+          {created.meetLink && (
+            <a
+              href={created.meetLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-sm bg-blue-500/10 border border-blue-500/30 text-blue-400 px-3 py-2 rounded-lg"
+            >
+              <Video size={16} /> Unirse a Meet
+            </a>
+          )}
+        </div>
       )}
 
       {open && (

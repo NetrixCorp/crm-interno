@@ -53,5 +53,12 @@ export async function POST(
     },
   })
 
-  return NextResponse.json({ success: true, eventId: event.id, htmlLink: event.htmlLink })
+  const meetLink = event.conferenceData?.entryPoints?.[0]?.uri || null
+
+  return NextResponse.json({
+    success: true,
+    eventId: event.id,
+    htmlLink: event.htmlLink,
+    meetLink,
+  })
 }

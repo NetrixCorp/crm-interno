@@ -35,6 +35,7 @@ export async function createCalendarEvent(
 
   const response = await calendar.events.insert({
     calendarId: 'primary',
+    conferenceDataVersion: 1,
     requestBody: {
       summary: event.title,
       description: event.description,
@@ -43,6 +44,12 @@ export async function createCalendarEvent(
       attendees: event.attendeeEmail
         ? [{ email: event.attendeeEmail }]
         : [],
+      conferenceData: {
+        createRequest: {
+          requestId: `netrix-${Date.now()}`,
+          conferenceSolutionKey: { type: 'hangoutsMeet' },
+        },
+      },
     },
   })
 
