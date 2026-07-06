@@ -42,7 +42,6 @@ export async function POST(request: Request) {
       <p><strong>Teléfono:</strong> ${contact.phone || '—'}</p>
     </div>`
   )
-  console.log('[EMAIL DEBUG] sendInternalNotification llamada para:', contact.name)
 
   return NextResponse.json(contact, { status: 201 })
 }
