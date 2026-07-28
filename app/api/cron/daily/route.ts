@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { sendInternalNotification } from '@/lib/email'
 import { formatCOP } from '@/lib/utils'
-import { STAGNATION_DAYS } from '@/lib/constants'
+import { STAGNATION_DAYS, BUSINESS_ID } from '@/lib/constants'
 
 export const dynamic = 'force-dynamic'
 
@@ -14,11 +14,12 @@ export async function GET() {
 
   const [followUpsHoy, dealsEstancados] = await Promise.all([
     db.deal.findMany({
-      where: { nextFollowUp: { gte: startOfDay, lte: endOfDay } },
+      where: { businessId: BUSINESS_ID, nextFollowUp: { gte: startOfDay, lte: endOfDay } },
       include: { contact: true },
     }),
     db.deal.findMany({
       where: {
+        businessId: BUSINESS_ID,
         stage: { notIn: ['Cerrado', 'Perdido'] },
         updatedAt: { lt: stagnationCutoff },
       },

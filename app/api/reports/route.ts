@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { db } from '@/lib/db'
+import { BUSINESS_ID } from '@/lib/constants'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,6 +14,7 @@ export async function GET() {
 
   const [allDeals, allContacts] = await Promise.all([
     db.deal.findMany({
+      where: { businessId: BUSINESS_ID },
       select: {
         id: true,
         valueCop: true,
@@ -25,7 +27,7 @@ export async function GET() {
     }),
     db.contact.findMany({
       select: { source: true, createdAt: true },
-      where: { createdAt: { gte: sixMonthsAgo } },
+      where: { businessId: BUSINESS_ID, createdAt: { gte: sixMonthsAgo } },
     }),
   ])
 

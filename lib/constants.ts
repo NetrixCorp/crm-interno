@@ -1,3 +1,5 @@
+export const BUSINESS_ID = 'netrix-interno'
+
 export const SITE_CONFIG = {
   name: 'NETRIX CRM',
   fullName: 'NETRIX CRM Interno',

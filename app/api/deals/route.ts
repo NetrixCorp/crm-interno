@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { db } from '@/lib/db'
+import { BUSINESS_ID } from '@/lib/constants'
 
 function serializeDeal(deal: any) {
   return { ...deal, valueCop: Number(deal.valueCop) }
@@ -11,6 +12,7 @@ export async function GET() {
   if (!userId) return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
 
   const deals = await db.deal.findMany({
+    where: { businessId: BUSINESS_ID },
     orderBy: { createdAt: 'desc' },
     include: { contact: true },
   })
@@ -33,6 +35,7 @@ export async function POST(request: Request) {
       probability: body.probability ?? 10,
       nextFollowUp: body.nextFollowUp ? new Date(body.nextFollowUp) : null,
       userId,
+      businessId: BUSINESS_ID,
     },
     include: { contact: true },
   })

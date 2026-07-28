@@ -2,12 +2,14 @@ import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { db } from '@/lib/db'
 import { sendInternalNotification } from '@/lib/email'
+import { BUSINESS_ID } from '@/lib/constants'
 
 export async function GET() {
   const { userId } = await auth()
   if (!userId) return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
 
   const contacts = await db.contact.findMany({
+    where: { businessId: BUSINESS_ID },
     orderBy: { createdAt: 'desc' },
     include: { _count: { select: { deals: true } } },
   })
@@ -28,6 +30,7 @@ export async function POST(request: Request) {
       source: body.source || 'Otro',
       status: body.status || 'Activo',
       userId,
+      businessId: BUSINESS_ID,
     },
   })
 

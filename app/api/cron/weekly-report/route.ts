@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { sendInternalNotification } from '@/lib/email'
 import { formatCOP } from '@/lib/utils'
-import { DEAL_STAGES } from '@/lib/constants'
+import { DEAL_STAGES, BUSINESS_ID } from '@/lib/constants'
 
 export const dynamic = 'force-dynamic'
 
@@ -10,9 +10,9 @@ export async function GET() {
   const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
 
   const [allDeals, leadsNuevos, dealsGanados] = await Promise.all([
-    db.deal.findMany({ where: { stage: { notIn: ['Cerrado', 'Perdido'] } } }),
-    db.contact.count({ where: { createdAt: { gte: oneWeekAgo } } }),
-    db.deal.findMany({ where: { stage: 'Cerrado', updatedAt: { gte: oneWeekAgo } } }),
+    db.deal.findMany({ where: { businessId: BUSINESS_ID, stage: { notIn: ['Cerrado', 'Perdido'] } } }),
+    db.contact.count({ where: { businessId: BUSINESS_ID, createdAt: { gte: oneWeekAgo } } }),
+    db.deal.findMany({ where: { businessId: BUSINESS_ID, stage: 'Cerrado', updatedAt: { gte: oneWeekAgo } } }),
   ])
 
   const revenuePipeline = allDeals.reduce((sum, d) => sum + Number(d.valueCop), 0)
